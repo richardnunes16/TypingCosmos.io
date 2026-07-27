@@ -1,4 +1,4 @@
-// Lista de textos que serão usados no treino de digitação
+// Lista de textos
 const textos = [
   "Programar é como construir pontes entre ideias e máquinas, passo a passo com precisão.",
   "Cada palavra digitada com calma ajuda a ganhar foco, ritmo e confiança durante a prática.",
@@ -6,7 +6,6 @@ const textos = [
   "As mulheres e os homens estavam espalhados pela terra. Uns estavam maravilhados, outros tinham-se cansado. Os que estavam maravilhados abriam a boca, os que se tinham cansado também abriam a boca. Ambos abriam a boca.⏎Houve um homem sozinho que se pôs a espreitar esta diferença: havia pessoas maravilhadas e outras que estavam cansadas.⏎Depois ainda espreitou melhor: todas as pessoas estavam maravilhadas, depois não sabiam aguentar-se maravilhadas e ficavam cansadas.⏎As pessoas estavam tristes ou alegres conforme a luz: para cada um, mais luz - alegres; menos luz - tristes.⏎O homem sozinho ficou a pensar nesta diferença. Para não esquecer, fez uns sinais numa pedra.⏎Este homem sozinho era da minha raça, era um Egípcio! Os sinais que ele gravou na pedra para medir a luz por dentro das pessoas chamaram-se hieróglifos.⏎Mais tarde veio outro homem sozinho que tornou estes sinais ainda mais fáceis. Fez vinte e dois sinais que bastavam para todas as combinações que há ao sol.⏎Este homem sozinho era da minha raça, era um Fenício! Cada um dos vinte e dois sinais era uma letra. Cada combinação de letras, uma palavra."
 ];
 
-// Armazena os elementos da página que serão manipulados pelo JavaScript
 const elementos = {
   botoesTempo: Array.from(document.querySelectorAll('.btn-tempo')),
   painelTempo: document.querySelector('.painel-estatisticas .estatistica:nth-child(1) b'),
