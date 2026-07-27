@@ -1,0 +1,253 @@
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&display=swap");
+
+:root {
+  --fonte1: "JetBrains Mono", monospace;
+  --fundo1: #0c091b;
+  --titulo: #0ee1e8;
+  --fundo2: #1b1e29;
+  --borda: #363b4e;
+  --texto2: #5c5f6b;
+  --texto1: #ceced1;
+  --detalhe1: #1a67cc;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  background-color: var(--fundo1);
+  color: var(--texto1);
+  font-family: var(--fonte1);
+}
+
+.projeto {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.cabecalho {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  color: var(--titulo);
+  font-size: 70px;
+  font-weight: 700;
+  margin-top: 20px;
+}
+
+.cabecalho img {
+  width: 50px;
+  height: 50px;
+}
+
+.seletor-tempo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--fundo2);
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  width: fit-content;
+  margin: 20px auto;
+  padding: 4px 8px;
+}
+
+.btn-tempo {
+  font-family: var(--fonte1);
+  font-size: 13px;
+  background-color: transparent;
+  color: var(--texto2);
+  border: none;
+  padding: 8px 14px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.btn-tempo:hover,
+.btn-tempo.active {
+  color: var(--titulo);
+  background-color: var(--borda);
+}
+
+.painel-estatisticas {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  margin-bottom: 20px;
+}
+
+.estatistica {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  color: var(--texto2);
+  font-size: 13px;
+}
+
+.estatistica b {
+  color: var(--texto1);
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.campo-digitacao {
+  position: relative;
+  background: var(--fundo1);
+  border: 1px solid var(--borda);
+  border-radius: 14px;
+  padding: 32px 36px;
+  cursor: text;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.janela-texto {
+  height: 132px;
+  overflow: hidden;
+  position: relative;
+}
+
+.texto-digitacao {
+  font-size: 26px;
+  line-height: 44px;
+  letter-spacing: 0.2px;
+  display: flex;
+  flex-wrap: wrap;
+  transition: transform 0.18s ease;
+  position: relative;
+}
+
+.entrada-digitacao {
+  width: 100%;
+  min-height: 90px;
+  padding: 16px 18px;
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--texto1);
+  font: 18px/1.6 var(--fonte1);
+  resize: vertical;
+  outline: none;
+}
+
+.entrada-digitacao:focus {
+  border-color: var(--titulo);
+  box-shadow: 0 0 0 2px rgba(14, 225, 232, 0.15);
+}
+
+.texto-digitacao .char.correct {
+  color: #6ff26f;
+}
+
+.texto-digitacao .char.wrong {
+  color: #ff7676;
+  text-decoration: underline;
+}
+
+.texto-digitacao .char.current {
+  background: rgba(14, 225, 232, 0.2);
+  border-radius: 4px;
+}
+
+.acoes {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.btn-reiniciar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--fundo2);
+  border: 1px solid var(--borda);
+  color: var(--texto2);
+  font-size: 13px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.1s ease;
+}
+
+.btn-reiniciar:hover {
+  color: var(--titulo);
+  border-color: var(--titulo);
+}
+
+.btn-reiniciar:active {
+  transform: scale(0.96);
+}
+
+.dica {
+  text-align: center;
+  font-size: 12px;
+  color: var(--texto2);
+}
+
+.painel-resultados {
+  display: none;
+  background: var(--fundo2);
+  border: 1px solid var(--borda);
+  border-radius: 14px;
+  padding: 40px;
+  text-align: center;
+  gap: 28px;
+  flex-direction: column;
+  margin-bottom: 24px;
+}
+
+.painel-resultados.show {
+  display: flex;
+}
+
+.resumo-resultados {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+}
+
+.resultado-ppm .valor,
+.resultado-precisao .porcentagem {
+  font-size: 52px;
+  font-weight: 700;
+  color: var(--detalhe1);
+  line-height: 1;
+}
+
+.resultado-ppm .dados,
+.resultado-precisao .precisao {
+  margin-top: 8px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--texto2);
+}
+
+.detalhes-resultados {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  font-size: 13px;
+  color: var(--texto2);
+}
+
+.detalhes-resultados b {
+  color: var(--texto1);
+}
