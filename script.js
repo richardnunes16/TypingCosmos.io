@@ -1,9 +1,8 @@
-// Lista de textos
+
 const textos = [
-  "Programar é como construir pontes entre ideias e máquinas, passo a passo com precisão.",
-  "Cada palavra digitada com calma ajuda a ganhar foco, ritmo e confiança durante a prática.",
-  "A tecnologia transforma sonhos em ferramentas, e a prática torna cada habilidade mais forte.",
-  "As mulheres e os homens estavam espalhados pela terra. Uns estavam maravilhados, outros tinham-se cansado. Os que estavam maravilhados abriam a boca, os que se tinham cansado também abriam a boca. Ambos abriam a boca.⏎Houve um homem sozinho que se pôs a espreitar esta diferença: havia pessoas maravilhadas e outras que estavam cansadas.⏎Depois ainda espreitou melhor: todas as pessoas estavam maravilhadas, depois não sabiam aguentar-se maravilhadas e ficavam cansadas.⏎As pessoas estavam tristes ou alegres conforme a luz: para cada um, mais luz - alegres; menos luz - tristes.⏎O homem sozinho ficou a pensar nesta diferença. Para não esquecer, fez uns sinais numa pedra.⏎Este homem sozinho era da minha raça, era um Egípcio! Os sinais que ele gravou na pedra para medir a luz por dentro das pessoas chamaram-se hieróglifos.⏎Mais tarde veio outro homem sozinho que tornou estes sinais ainda mais fáceis. Fez vinte e dois sinais que bastavam para todas as combinações que há ao sol.⏎Este homem sozinho era da minha raça, era um Fenício! Cada um dos vinte e dois sinais era uma letra. Cada combinação de letras, uma palavra."
+  "o futuro da tecnologia depende da capacidade das pessoas de utilizar o conhecimento cientifico e a criatividade para desenvolver solucoes que possam melhorar a qualidade de vida e resolver problemas importantes da sociedade",
+  "a inteligencia artificial esta criando novas possibilidades para a tecnologia ao permitir que computadores analisem grandes quantidades de informacoes reconhecam padroes e auxiliem pessoas em diferentes atividades",
+  "a tecnologia transforma a maneira como vivemos trabalhamos estudamos e nos comunicamos permitindo que tarefas complexas sejam realizadas com mais rapidez e criando novas possibilidades para o futuro"
 ];
 
 const elementos = {
@@ -21,7 +20,6 @@ const elementos = {
   dica: document.querySelector('.dica')
 };
 
-// Guarda o status da rodada: tempo, texto, erros e progresso
 const estado = {
   tempoSelecionado: 30,
   tempoRestante: 30,
@@ -35,12 +33,10 @@ const estado = {
   inicio: null
 };
 
-// Escolhe um texto aleatório para o usuário digitar
 function escolherTexto() {
   estado.textoAlvo = textos[Math.floor(Math.random() * textos.length)];
 }
 
-// Mostra o texto na tela
 function renderizarTexto() {
   const chars = estado.textoAlvo.split('');
 
@@ -54,13 +50,15 @@ function renderizarTexto() {
         classe += ' current';
       }
 
-      const conteudo = caractere === ' ' ? '&nbsp;' : caractere;
+      let conteudo = caractere;
+      if (caractere === ' ') conteudo = '&nbsp;';
+      if (caractere === '⏎') conteudo = '<br/>';
+
       return `<span class="${classe}">${conteudo}</span>`;
     })
     .join('');
 }
 
-// Contador de acertos e erros com base na digitação
 function calcularEstatisticas() {
   let acertos = 0;
   let erros = 0;
@@ -82,7 +80,6 @@ function calcularEstatisticas() {
   estado.erros = erros;
 }
 
-// Atualiza os números mostrados no painel
 function atualizarPainel() {
   elementos.painelTempo.textContent = estado.tempoRestante;
 
@@ -101,7 +98,6 @@ function atualizarPainel() {
   elementos.painelPrecisao.textContent = `${precisao}%`;
 }
 
-// Inicia o cronômetro da rodada
 function iniciarTimer() {
   if (estado.rodando) return;
 
@@ -118,7 +114,6 @@ function iniciarTimer() {
   }, 1000);
 }
 
-// Encerra a rodada e exibe o resultado final
 function finalizarJogo() {
   clearInterval(estado.timer);
   estado.rodando = false;
@@ -145,7 +140,6 @@ function finalizarJogo() {
   elementos.dica.textContent = 'Jogo encerrado. Clique em Reiniciar para tentar outro texto.';
 }
 
-// Reinicia a rodada com um novo texto e tempo limpo
 function reiniciarJogo() {
   clearInterval(estado.timer);
 
@@ -168,10 +162,10 @@ function reiniciarJogo() {
   elementos.campoDigitacao.focus();
 }
 
-// Define o tempo da rodada escolhida pelo usuário
 function selecionarTempo(segundos) {
   estado.tempoSelecionado = segundos;
   estado.tempoRestante = segundos;
+  
   elementos.botoesTempo.forEach((botao) => {
     botao.classList.toggle('active', Number(botao.dataset.tempo) === segundos);
   });
@@ -179,9 +173,8 @@ function selecionarTempo(segundos) {
   reiniciarJogo();
 }
 
-// Responde ao evento de digitação do usuário
 function iniciarDigito() {
-  if (!estado.rodando) {
+  if (!estado.rodando && elementos.campoDigitacao.value.length > 0) {
     iniciarTimer();
   }
 
@@ -195,19 +188,13 @@ function iniciarDigito() {
   }
 }
 
-// Liga os eventos dos botões e do campo de digitação
 function configurarEventos() {
   elementos.botoesTempo.forEach((botao) => {
     botao.addEventListener('click', () => selecionarTempo(Number(botao.dataset.tempo)));
   });
 
   elementos.campoDigitacao.addEventListener('input', iniciarDigito);
-  elementos.campoDigitacao.addEventListener('keydown', (evento) => {
-    if (evento.key === 'Enter') {
-      evento.preventDefault();
-    }
-  });
-
+  
   elementos.botaoReiniciar.addEventListener('click', reiniciarJogo);
 
   document.querySelector('.campo-digitacao').addEventListener('click', () => {
@@ -215,13 +202,12 @@ function configurarEventos() {
   });
 }
 
-// Inicializa o jogo de digitação 
 function inicializar() {
   escolherTexto();
   renderizarTexto();
   atualizarPainel();
   configurarEventos();
-  selecionarTempo(30);
+  elementos.campoDigitacao.focus();
 }
 
 inicializar();
