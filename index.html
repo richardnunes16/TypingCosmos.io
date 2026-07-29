@@ -4,80 +4,68 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Typing Cosmos</title>
-
-    <link rel="stylesheet" href="CSS/style.css" />
+    <link rel="stylesheet" href="style.css" />
   </head>
 
   <body>
     <div class="projeto">
-
-    <header>
+      <header>
         <div class="cabecalho">
-            <img src="IMG/ICONE_COSMOS.png" alt="Ícone Typing Cosmos">
-            TYPING COSMOS
+          <img src="ICONE_COSMOS.png" alt="Ícone Typing Cosmos" />
+          TYPING COSMOS
         </div>
-    </header>
+      </header>
 
-    <div class="seletor-tempo">
+      <div class="seletor-tempo">
         <button class="btn-tempo" data-tempo="15">15s</button>
-        <button class="btn-tempo" data-tempo="30">30s</button>
+        <button class="btn-tempo active" data-tempo="30">30s</button>
         <button class="btn-tempo" data-tempo="60">60s</button>
-    </div>
+      </div>
 
-    <div class="painel-estatisticas">
+      <div class="painel-estatisticas">
         <div class="estatistica"><b>30</b>s</div>
         <div class="estatistica"><b>0</b> ppm</div>
         <div class="estatistica"><b>100</b>%</div>
-    </div>
+      </div>
 
-    <div class="campo-digitacao">
+      <div class="campo-digitacao">
+        <textarea class="entrada-digitacao" autofocus></textarea>
+
         <div class="janela-texto">
-            <div class="texto-digitacao"></div>
+          <div class="texto-digitacao"></div>
         </div>
 
-        <textarea
-          class="entrada-digitacao"
-          placeholder="Comece a digitar..."
-          spellcheck="false"
-          autocomplete="off"
-          autocapitalize="off"
-        ></textarea>
-    </div>
-
-    <div class="painel-resultados">
-        <div class="resumo-resultados">
-
+        <div class="painel-resultados">
+          <div class="resumo-resultados">
             <div class="resultado-ppm">
-                <div class="valor">0</div>
-                <div class="dados">palavras/min</div>
+              <div class="valor">0</div>
+              <div class="dados">palavras/min</div>
             </div>
 
             <div class="resultado-precisao">
-                <div class="porcentagem">0%</div>
-                <div class="precisao">Precisão</div>
+              <div class="porcentagem">0%</div>
+              <div class="precisao">Precisão</div>
             </div>
+          </div>
 
-        </div>
-
-        <div class="detalhes-resultados">
+          <div class="detalhes-resultados">
             <div><b>0</b> ppm</div>
             <div><b>0</b> caracteres</div>
             <div><b>0</b> erros</div>
             <div><b>0s</b> duração</div>
+          </div>
         </div>
-    </div>
+      </div>
 
-    <div class="acoes">
+      <div class="acoes">
         <button class="btn-reiniciar">Reiniciar</button>
-    </div>
+      </div>
 
-    <div class="dica">
+      <div class="dica">
         Clique em "Reiniciar" para gerar um novo texto.
-    </div>
-
+      </div>
     </div>
 
     <script src="script.js"></script>
   </body>
 </html>
-
