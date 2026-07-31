@@ -41,21 +41,20 @@ const elementos = {
   dica: document.querySelector('.dica')
 };
 
-const ALTURA_LINHA = 44;
-
-const BUFFER_MINIMO_CARACTERES = 250;
-
 const estado = {
   tempoSelecionado: 30,
   tempoRestante: 30,
   rodando: false,
   timer: null,
+  textoAtual: '',
   textoDigitado: '',
   acertos: 0,
   erros: 0,
   concluido: false,
   inicio: null,
-  historicoTextos: []
+  historicoTextos: [],
+  textoIndex: 0,
+  scrollPos: 0
 };
 
 function gerarTextoComPalavras(quantidade = 50) {
@@ -70,68 +69,75 @@ function gerarTextoComPalavras(quantidade = 50) {
 function adicionarNovoTexto() {
   const novoTexto = gerarTextoComPalavras(50);
   estado.historicoTextos.push(novoTexto);
-}
-
-function obterTextoCompleto() {
-  return estado.historicoTextos.join(' ');
-}
-
-function garantirTextoSuficiente(posicaoAtual) {
-  while (obterTextoCompleto().length - posicaoAtual < BUFFER_MINIMO_CARACTERES) {
-    adicionarNovoTexto();
-  }
+  estado.textoIndex = estado.historicoTextos.length - 1;
+  estado.textoAtual = novoTexto;
 }
 
 function renderizarTexto() {
-  const textoCompleto = obterTextoCompleto();
+  const textoCompleto = estado.historicoTextos.join(' ');
   const chars = textoCompleto.split('');
   const textoDigitado = estado.textoDigitado;
-  const posicaoAtual = textoDigitado.length;
+
+  let charsDigitadosAntes = 0;
+  for (let i = 0; i < estado.textoIndex; i++) {
+    charsDigitadosAntes += estado.historicoTextos[i].length + 1;
+  }
+  const posicaoAtual = charsDigitadosAntes + estado.textoDigitado.length;
+
+  // VERIFICA SE DIGITOU UM ESPAÇO (FIM DE PALAVRA)
+  if (textoDigitado.length > 0) {
+    const ultimoCharDigitado = textoDigitado[textoDigitado.length - 1];
+    if (ultimoCharDigitado === ' ') {
+      estado.scrollPos = posicaoAtual;
+    }
+  }
+
+  // SE CHEGOU NO FIM DO TEXTO, SCROLLA TAMBÉM
+  if (posicaoAtual >= textoCompleto.length) {
+    estado.scrollPos = posicaoAtual;
+  }
+
+  const charsPorLinha = 18;
+  const linhaAtual = Math.floor(estado.scrollPos / charsPorLinha);
+  const offsetY = Math.max(0, (linhaAtual - 1) * 44);
+  elementos.textoDigitacao.style.transform = `translateY(-${offsetY}px)`;
 
   elementos.textoDigitacao.innerHTML = chars
     .map((caractere, indice) => {
       let classe = 'char';
 
-      if (indice < textoDigitado.length) {
-        classe += textoDigitado[indice] === caractere ? ' correct' : ' wrong';
+      if (indice < textoDigitado.length + charsDigitadosAntes) {
+        const charDigitado = textoDigitado[indice - charsDigitadosAntes];
+        if (charDigitado === caractere) {
+          classe += ' correct';
+        } else {
+          classe += ' wrong';
+        }
       } else if (!estado.concluido && indice === posicaoAtual) {
         classe += ' current';
       }
 
-      const conteudo = caractere === ' ' ? '&nbsp;' : caractere;
+      let conteudo = caractere;
+      if (caractere === ' ') {
+        conteudo = '&nbsp;';
+      }
+
       return `<span class="${classe}">${conteudo}</span>`;
     })
     .join('');
-
-  ajustarScroll(posicaoAtual, chars.length);
-}
-
-function ajustarScroll(posicaoAtual, totalChars) {
-  const spans = elementos.textoDigitacao.children;
-  if (totalChars === 0) return;
-
-  const indiceAlvo = Math.min(posicaoAtual, totalChars - 1);
-  const spanAlvo = spans[indiceAlvo];
-  if (!spanAlvo) return;
-
-  const linhaAtual = Math.round(spanAlvo.offsetTop / ALTURA_LINHA);
-  const offsetY = Math.max(0, (linhaAtual - 1) * ALTURA_LINHA);
-
-  elementos.textoDigitacao.style.transform = `translateY(-${offsetY}px)`;
 }
 
 function calcularEstatisticas() {
   let acertos = 0;
   let erros = 0;
   const textoDigitado = estado.textoDigitado;
-  const textoCompleto = obterTextoCompleto();
 
   for (let i = 0; i < textoDigitado.length; i++) {
-    if (i >= textoCompleto.length) {
+    if (i >= estado.textoAtual.length) {
       erros += 1;
       continue;
     }
-    if (textoDigitado[i] === textoCompleto[i]) {
+    if (textoDigitado[i] === estado.textoAtual[i]) {
       acertos += 1;
     } else {
       erros += 1;
@@ -217,6 +223,8 @@ function reiniciarJogo() {
   estado.erros = 0;
   estado.inicio = null;
   estado.historicoTextos = [];
+  estado.textoIndex = 0;
+  estado.scrollPos = 0;
 
   elementos.campoDigitacao.value = '';
   elementos.campoDigitacao.disabled = false;
@@ -224,7 +232,6 @@ function reiniciarJogo() {
   elementos.dica.textContent = 'Digite o texto abaixo e tente atingir a melhor precisão.';
 
   adicionarNovoTexto();
-  garantirTextoSuficiente(0);
   renderizarTexto();
   atualizarPainel();
   elementos.campoDigitacao.focus();
@@ -246,8 +253,15 @@ function iniciarDigito() {
     iniciarTimer();
   }
 
-  estado.textoDigitado = elementos.campoDigitacao.value;
-  garantirTextoSuficiente(estado.textoDigitado.length);
+  const textoDigitado = elementos.campoDigitacao.value;
+  estado.textoDigitado = textoDigitado;
+
+  // SE TERMINOU O TEXTO, ADICIONA NOVO
+  if (textoDigitado.length >= estado.textoAtual.length && !estado.concluido) {
+    adicionarNovoTexto();
+    estado.textoDigitado = '';
+    elementos.campoDigitacao.value = '';
+  }
 
   calcularEstatisticas();
   renderizarTexto();
@@ -271,7 +285,6 @@ function configurarEventos() {
 
 function inicializar() {
   adicionarNovoTexto();
-  garantirTextoSuficiente(0);
   renderizarTexto();
   atualizarPainel();
   configurarEventos();
