@@ -1,8 +1,29 @@
-
-const textos = [
-  "o futuro da tecnologia depende da capacidade das pessoas de utilizar o conhecimento cientifico e a criatividade para desenvolver solucoes que possam melhorar a qualidade de vida e resolver problemas importantes da sociedade",
-  "a inteligencia artificial esta criando novas possibilidades para a tecnologia ao permitir que computadores analisem grandes quantidades de informacoes reconhecam padroes e auxiliem pessoas em diferentes atividades",
-  "a tecnologia transforma a maneira como vivemos trabalhamos estudamos e nos comunicamos permitindo que tarefas complexas sejam realizadas com mais rapidez e criando novas possibilidades para o futuro"
+const palavras = [
+"tecnologia", "computador", "programação", "javascript", "algoritmo", "desenvolvimento", "interface", "servidor", "framework", "biblioteca",
+"aplicativo", "navegador", "monitor", "teclado", "processador", "memória", "internet", "protocolo", "database", "documento",
+"pesquisa", "conhecimento", "criatividade", "aprendizado", "experiência", "responsabilidade", "oportunidade", "persistência", "dedicação", "transformação",
+"organização", "planejamento", "estratégia", "objetivo", "resultado", "desempenho", "qualidade", "progresso", "competência", "habilidade",
+"eficiência", "produtividade", "liderança", "comunicação", "colaboração", "solução", "problema", "desafio", "conquista", "inovação",
+"digital", "virtual", "sistema", "arquivo", "código", "comando", "função", "variável", "constante", "estrutura",
+"repetição", "condição", "execução", "compilador", "terminal", "conexão", "segurança", "criptografia", "autenticação", "permissão",
+"usuário", "cadastro", "mensagem", "conteúdo", "plataforma", "ferramenta", "projeto", "empresa", "mercado", "indústria",
+"profissão", "carreira", "contrato", "documentação", "engenharia", "laboratório", "cientista", "universidade", "estudante", "professor",
+"biblioteca", "caderno", "caneta", "mochila", "calculadora", "experimento", "fórmula", "equação", "estatística", "geometria",
+"matemática", "física", "química", "biologia", "astronomia", "planeta", "galáxia", "universo", "asteroide", "cometa",
+"foguete", "astronauta", "gravidade", "atmosfera", "continente", "montanha", "cachoeira", "floresta", "natureza", "oceano",
+"correnteza", "tempestade", "primavera", "inverno", "horizonte", "paisagem", "aventura", "exploração", "descoberta", "viagem",
+"passagem", "aeroporto", "bicicleta", "motocicleta", "caminhão", "automóvel", "rodovia", "estacionamento", "semáforo", "combustível",
+"garagem", "oficina", "mercadoria", "comércio", "restaurante", "padaria", "supermercado", "hospital", "farmácia", "academia",
+"parque", "jardim", "praça", "condomínio", "apartamento", "escritório", "cozinha", "banheiro", "corredor", "janela",
+"cortina", "espelho", "geladeira", "micro-ondas", "televisão", "ventilador", "aspirador", "cafeteira", "liquidificador", "refrigerante",
+"chocolate", "sanduíche", "macarrão", "hambúrguer", "morango", "abacaxi", "laranja", "melancia", "abóbora", "cenoura",
+"pepino", "tomate", "cebola", "alface", "espinafre", "amendoim", "castanha", "biscoito", "pipoca", "sorvete",
+"camiseta", "bermuda", "jaqueta", "sapato", "tênis", "meias", "moletom", "gravata", "capacete", "guarda-chuva",
+"fotografia", "desenho", "escultura", "arquitetura", "literatura", "romance", "personagem", "capítulo", "parágrafo", "diálogo",
+"aventureiro", "guerreiro", "castelo", "dragão", "espada", "armadura", "escudo", "feiticeiro", "magia", "portal",
+"labirinto", "cristal", "diamante", "tesouro", "recompensa", "campeonato", "competição", "jogador", "treinamento", "velocidade",
+"resistência", "vencedor", "medalha", "troféu", "basquete", "voleibol", "natação", "atletismo", "xadrez", "corrida",
+"futebol", "motocross", "disciplina", "motivação", "inspiração", "equilíbrio", "concentração", "atenção", "evolução", "crescimento"
 ];
 
 const elementos = {
@@ -20,61 +41,102 @@ const elementos = {
   dica: document.querySelector('.dica')
 };
 
+const ALTURA_LINHA = 44;
+
+const BUFFER_MINIMO_CARACTERES = 250;
+
 const estado = {
   tempoSelecionado: 30,
   tempoRestante: 30,
   rodando: false,
   timer: null,
-  textoAlvo: '',
   textoDigitado: '',
   acertos: 0,
   erros: 0,
   concluido: false,
-  inicio: null
+  inicio: null,
+  historicoTextos: []
 };
 
-function escolherTexto() {
-  estado.textoAlvo = textos[Math.floor(Math.random() * textos.length)];
+function gerarTextoComPalavras(quantidade = 50) {
+  const palavrasSelecionadas = [];
+  for (let i = 0; i < quantidade; i++) {
+    const indice = Math.floor(Math.random() * palavras.length);
+    palavrasSelecionadas.push(palavras[indice]);
+  }
+  return palavrasSelecionadas.join(' ');
+}
+
+function adicionarNovoTexto() {
+  const novoTexto = gerarTextoComPalavras(50);
+  estado.historicoTextos.push(novoTexto);
+}
+
+function obterTextoCompleto() {
+  return estado.historicoTextos.join(' ');
+}
+
+function garantirTextoSuficiente(posicaoAtual) {
+  while (obterTextoCompleto().length - posicaoAtual < BUFFER_MINIMO_CARACTERES) {
+    adicionarNovoTexto();
+  }
 }
 
 function renderizarTexto() {
-  const chars = estado.textoAlvo.split('');
+  const textoCompleto = obterTextoCompleto();
+  const chars = textoCompleto.split('');
+  const textoDigitado = estado.textoDigitado;
+  const posicaoAtual = textoDigitado.length;
 
   elementos.textoDigitacao.innerHTML = chars
     .map((caractere, indice) => {
       let classe = 'char';
 
-      if (indice < estado.textoDigitado.length) {
-        classe += estado.textoDigitado[indice] === caractere ? ' correct' : ' wrong';
-      } else if (!estado.concluido && indice === estado.textoDigitado.length) {
+      if (indice < textoDigitado.length) {
+        classe += textoDigitado[indice] === caractere ? ' correct' : ' wrong';
+      } else if (!estado.concluido && indice === posicaoAtual) {
         classe += ' current';
       }
 
-      let conteudo = caractere;
-      if (caractere === ' ') conteudo = '&nbsp;';
-      if (caractere === '⏎') conteudo = '<br/>';
-
+      const conteudo = caractere === ' ' ? '&nbsp;' : caractere;
       return `<span class="${classe}">${conteudo}</span>`;
     })
     .join('');
+
+  ajustarScroll(posicaoAtual, chars.length);
+}
+
+function ajustarScroll(posicaoAtual, totalChars) {
+  const spans = elementos.textoDigitacao.children;
+  if (totalChars === 0) return;
+
+  const indiceAlvo = Math.min(posicaoAtual, totalChars - 1);
+  const spanAlvo = spans[indiceAlvo];
+  if (!spanAlvo) return;
+
+  const linhaAtual = Math.round(spanAlvo.offsetTop / ALTURA_LINHA);
+  const offsetY = Math.max(0, (linhaAtual - 1) * ALTURA_LINHA);
+
+  elementos.textoDigitacao.style.transform = `translateY(-${offsetY}px)`;
 }
 
 function calcularEstatisticas() {
   let acertos = 0;
   let erros = 0;
+  const textoDigitado = estado.textoDigitado;
+  const textoCompleto = obterTextoCompleto();
 
-  Array.from(estado.textoDigitado).forEach((caractere, indice) => {
-    if (indice >= estado.textoAlvo.length) {
+  for (let i = 0; i < textoDigitado.length; i++) {
+    if (i >= textoCompleto.length) {
       erros += 1;
-      return;
+      continue;
     }
-
-    if (caractere === estado.textoAlvo[indice]) {
+    if (textoDigitado[i] === textoCompleto[i]) {
       acertos += 1;
     } else {
       erros += 1;
     }
-  });
+  }
 
   estado.acertos = acertos;
   estado.erros = erros;
@@ -91,8 +153,12 @@ function atualizarPainel() {
 
   const segundosDecorridos = estado.tempoSelecionado - estado.tempoRestante;
   const minutosDecorridos = segundosDecorridos / 60;
-  const wpm = minutosDecorridos > 0 ? Math.round((estado.acertos / 5) / minutosDecorridos) : 0;
-  const precisao = Math.round((estado.acertos / Math.max(1, estado.textoDigitado.length)) * 100);
+  const wpm = minutosDecorridos > 0
+    ? Math.round((estado.acertos / 5) / minutosDecorridos)
+    : 0;
+  const precisao = Math.round(
+    (estado.acertos / Math.max(1, estado.textoDigitado.length)) * 100
+  );
 
   elementos.painelWpm.textContent = wpm.toString();
   elementos.painelPrecisao.textContent = `${precisao}%`;
@@ -100,7 +166,6 @@ function atualizarPainel() {
 
 function iniciarTimer() {
   if (estado.rodando) return;
-
   estado.rodando = true;
   estado.inicio = Date.now();
 
@@ -121,7 +186,9 @@ function finalizarJogo() {
 
   const segundosDecorridos = estado.tempoSelecionado - Math.max(estado.tempoRestante, 0);
   const minutosDecorridos = segundosDecorridos / 60;
-  const wpm = minutosDecorridos > 0 ? Math.round((estado.acertos / 5) / minutosDecorridos) : 0;
+  const wpm = minutosDecorridos > 0
+    ? Math.round((estado.acertos / 5) / minutosDecorridos)
+    : 0;
   const precisao = estado.textoDigitado.length > 0
     ? Math.round((estado.acertos / estado.textoDigitado.length) * 100)
     : 100;
@@ -132,7 +199,7 @@ function finalizarJogo() {
 
   const detalhes = elementos.detalhesResultados.querySelectorAll('b');
   detalhes[0].textContent = wpm;
-  detalhes[1].textContent = estado.textoAlvo.length;
+  detalhes[1].textContent = estado.textoDigitado.length;
   detalhes[2].textContent = estado.erros;
   detalhes[3].textContent = `${segundosDecorridos}s`;
 
@@ -142,7 +209,6 @@ function finalizarJogo() {
 
 function reiniciarJogo() {
   clearInterval(estado.timer);
-
   estado.rodando = false;
   estado.concluido = false;
   estado.tempoRestante = estado.tempoSelecionado;
@@ -150,13 +216,15 @@ function reiniciarJogo() {
   estado.acertos = 0;
   estado.erros = 0;
   estado.inicio = null;
+  estado.historicoTextos = [];
 
   elementos.campoDigitacao.value = '';
   elementos.campoDigitacao.disabled = false;
   elementos.painelResultados.classList.remove('show');
   elementos.dica.textContent = 'Digite o texto abaixo e tente atingir a melhor precisão.';
 
-  escolherTexto();
+  adicionarNovoTexto();
+  garantirTextoSuficiente(0);
   renderizarTexto();
   atualizarPainel();
   elementos.campoDigitacao.focus();
@@ -165,7 +233,7 @@ function reiniciarJogo() {
 function selecionarTempo(segundos) {
   estado.tempoSelecionado = segundos;
   estado.tempoRestante = segundos;
-  
+
   elementos.botoesTempo.forEach((botao) => {
     botao.classList.toggle('active', Number(botao.dataset.tempo) === segundos);
   });
@@ -178,23 +246,22 @@ function iniciarDigito() {
     iniciarTimer();
   }
 
-  estado.textoDigitado = elementos.campoDigitacao.value.slice(0, estado.textoAlvo.length);
+  estado.textoDigitado = elementos.campoDigitacao.value;
+  garantirTextoSuficiente(estado.textoDigitado.length);
+
   calcularEstatisticas();
   renderizarTexto();
   atualizarPainel();
-
-  if (estado.textoDigitado.length >= estado.textoAlvo.length) {
-    finalizarJogo();
-  }
 }
 
 function configurarEventos() {
   elementos.botoesTempo.forEach((botao) => {
-    botao.addEventListener('click', () => selecionarTempo(Number(botao.dataset.tempo)));
+    botao.addEventListener('click', () => {
+      selecionarTempo(Number(botao.dataset.tempo));
+    });
   });
 
   elementos.campoDigitacao.addEventListener('input', iniciarDigito);
-  
   elementos.botaoReiniciar.addEventListener('click', reiniciarJogo);
 
   document.querySelector('.campo-digitacao').addEventListener('click', () => {
@@ -203,7 +270,8 @@ function configurarEventos() {
 }
 
 function inicializar() {
-  escolherTexto();
+  adicionarNovoTexto();
+  garantirTextoSuficiente(0);
   renderizarTexto();
   atualizarPainel();
   configurarEventos();
